@@ -21,10 +21,10 @@ services:
     image: mysql:8.4
     container_name: mysql_db
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: naivebayes
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
+       MYSQL_ROOT_PASSWORD: password
+       MYSQL_DATABASE: naivebayes
+       MYSQL_USER: laravel
+       MYSQL_PASSWORD: laravel
     ports:
       - "3306:3306"
     volumes:
