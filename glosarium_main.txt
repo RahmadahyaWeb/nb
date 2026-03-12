@@ -1,0 +1,33 @@
+================================================================================
+GLOSARIUM DOKUMENTASI API (main.py)
+================================================================================
+
+Berikut merupakan penjelasan dari berbagai istilah teknis yang digunakan di dalam dokumentasi file `main.py`. Istilah-istilah ini sudah dijabarkan dengan bahasa yang lebih sederhana dan mudah dipahami:
+
+1. **API (Application Programming Interface)**: Sebuah "pelayan restoran" yang menghubungkan aplikasi pengguna (misal: situs web/aplikasi ponsel) dengan sistem belakang layar (server database/AI). API bertugas mengantar pesanan (request pengguna) dan membawa kembali makanannya (response hasil sistem).
+
+2. **BaseModel (Pydantic)**: Bentuk dari sebuah formulir perjanjian/aturan pasti. Ini yang memastikan jika pengguna web mengirim baris teks "angka bobot", data yang masuk benar-benar sebuah angka utuh (int), bukan tulisan apalagi gambar.
+
+3. **Endpoint**: Pintu/alamat spesifik di server untuk mengirim barang (data). Di analogi restoran, Endpoint adalah nomor meja atau nomor loket khusus untuk memesan hidangan tertentu, misalnya alamat `/api/sort-tasks`.
+
+4. **Exception (HTTPException)**: Sinyal "Terdapat Kesalahan Sistem!". Jika ada barang rusak atau cara pengisian formulir user salah kaprah, sistem (server) tidak akan pingsan meledak, melainkan ia melemparkan kode teguran (contoh: 400 Bad Request) dan menolak halus pesanan.
+
+5. **FastAPI**: Salah satu "bengkel perakitan" (Framework) tercepat berbahan dasar bahasa Python yang memudahkan programmer merakit situs web berbasis API. Otomatis, anti-error, dan luar biasa gesit kinerjanya.
+
+6. **Inference (Memprediksi)**: Saat di mana model (otak) Machine Learning sudah selesai masa sekolah (training) dan kini ditugaskan "bekerja" menebak/menilai sebuah bahan/kasus soal yang belum pernah AI itu lihat sebelumnya dalam hitungan detik.
+
+7. **JSON (JavaScript Object Notation)**: Bahasa pengantar universal berbentuk teks kamus untuk bertukar data antar program. Bentuk tulisan yang paling bisa dipahami bersama antara bahasa pemrograman di layar ponsel, komputer, jam tangan, sampai mesin kasir.
+
+8. **Method POST**: Semacam truk ekspedisi kurir yang digunakan web untuk mensuplai/mengirim sekotak data rahasia dari gawai pengguna masuk menuju gudang server API. Berbeda dengan method GET, yang ibaratnya cuma bertanya dan tak membawa kiriman barang.
+
+9. **Model/Machine Learning Model (.pkl file)**: "Otak digital" hasil didikan algoritma di masa lalu yang di-awet-kan ke format file (.pkl). Daripada AI harus belajar baca buku ratusan ribu halaman tiap komputernya menyala, file ini cukup dimuat seketika dan ia langsung melibas jawaban dari pertanyaan tersulit dari pengguna.
+
+10. **Payload**: Paket muatan kardus intinya sendiri. Ketika pengguna web mengirim data rincian tugas (judul, bobot, deadline), inti muatan dari rincian surat itu disebut "payload".
+
+11. **Pydantic**: Tukang periksa kualitas barang kiriman di jalur masuk API (Quality Control). Pydantic bertugas keras menolak dan menjerit bila data yang datang berantakan dan tak sesuai pakem format awal (BaseModel).
+
+12. **Response**: Paket jawaban balasan yang dikirim keluar oleh Server Web menjemput pengirimnya, sehabis komputer kelar memikirkan masalahnya (misalnya: merapikan ranking/urutan prioritas tugas prioritas tinggi).
+
+13. **Sorting Algoritma**: Aturan mengurutkan daftar barisan benda. Dalam kasus file ini, tugas yang tingkatannya kritikal diloncatkan ke antrean pertama, apalagi jika masa tenggatnya tinggal 1-2 hari lagi; ketimbang tugas biasa yang masa batas kerjanya masih 3 bulan lagi.
+
+14. **Story Point (Bobot Cerita)**: Angka estimasi satuan tingkat kerumitan dan beban usaha untuk menyelesaikan satu buah tugas. Biasa digunakan tim kreatif/programmer untuk tidak cuma melihat waktu, tapi tingkat stress/susahnya tugas itu dikerjakan.

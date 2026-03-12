@@ -1,0 +1,116 @@
+================================================================================
+DOKUMENTASI ALUR KERJA Pembuatan Model Naive Bayes
+================================================================================
+
+Alur Kerja ini mencakup implementasi proses data preprocessing, kalibrasi label (pendekatan heuristik berbasis aturan), hingga pembangunan dan penyimpanan model klasifikasi Machine Learning (Naive Bayes) menggunakan Pipa scikit-learn dan jcopml. 
+
+--------------------------------------------------------------------------------
+CELL 1 (Code): Import Library
+--------------------------------------------------------------------------------
+Mengimpor library dan modul yang diperlukan untuk manipulasi data (NumPy, Pandas), pemisahan data train/test, penyusunan Machine Learning Pipeline & preprocessors (Scikit-Learn), serta modul utilitas untuk pipeline dan fungsi menyimpan/memuat model dari jcopml.
+
+--------------------------------------------------------------------------------
+CELL 2 (Markdown): # import data
+--------------------------------------------------------------------------------
+Judul bagian/kategori tahapan pipeline, yang menandakan dimulainya proses muat data.
+
+--------------------------------------------------------------------------------
+CELL 3 (Code): Membaca Data
+--------------------------------------------------------------------------------
+Membaca data source berupa berkas CSV dari path "data/TASK MANAGEMENT.csv" dan memuatnya ke dalam DataFrame Pandas. Menampilkan lima baris awal data untuk sampel data awal.
+
+--------------------------------------------------------------------------------
+CELL 4 (Markdown): # Data Preprocessing
+--------------------------------------------------------------------------------
+Menandakan dimulainya tahap pra-pemrosesan data (data wrangling).
+
+--------------------------------------------------------------------------------
+CELL 5 (Code): Feature Engineering Awal (Teks & Tanggal)
+--------------------------------------------------------------------------------
+- Mengonversi format kolom `created_date` dan `due_date` menjadi tipe data datetime.
+- Menggabungkan elemen teks dari `task_title` dan `task_description` ke dalam satu kolom baru bernama `combined_text`.
+- Menghitung sisa hari target (selisih hari dari mulai dibuat hingga deadline) dan menyimpannya ke dalam fitur baru `days_to_due`, memastikan tidak ada rentang hari bernilai negatif dengan limit batas bawah (`clip`) (lower=0).
+- Menghapus kolom asli yang sudah tidak relevan dan sudah diolah, seperti `created_date`, `due_date`, `task_title`, dan `task_description`.
+
+--------------------------------------------------------------------------------
+CELL 6 (Code): Feature Selection Awal (Penghapusan Kolom)
+--------------------------------------------------------------------------------
+Menghapus sejumlah kolom tambahan yang tidak akan dipakai dalam pemodelan (karena dapat menyebabkan kebocoran info/leakage atau minim arti analitik), seperti `task_id`, `status`, `actual_hours`, `assigned_to`, `reporter`, dan lain-lain.
+
+--------------------------------------------------------------------------------
+CELL 7 (Code): Pengecekan Distribusi Label Awal
+--------------------------------------------------------------------------------
+Menganalisis dan mencetak jumlah masing-masing kelas unik di dalam kolom `priority` (target fitur) berdasarkan data aslinya sebelum dilakukan revisi maupun kalibrasi label. Terlihat sebaran Medium, High, Low, Critical.
+
+--------------------------------------------------------------------------------
+CELL 8 (Code): Binning (Kategorisasi Numerik)
+--------------------------------------------------------------------------------
+Membuat dua fitur kategorikal baru sebagai turunan dari kolom berjenis numerik untuk membantu logika kalibrasi di cell selanjutnya:
+1. `status_deadline`: Mengubah jarak hari `days_to_due` menjadi kategori ordinal ["Mepet", "Sedang", "Lama"].
+2. `status_beban`: Mengubah nominal ukuran pointer dari `story_points` menjadi kategori ["Ringan", "Menengah", "Berat"].
+
+--------------------------------------------------------------------------------
+CELL 9 (Code): Definisi Fungsi Kalibrasi Hybrid (Aturan Heuristik)
+--------------------------------------------------------------------------------
+Mendefinisikan fungsi (aturan/rule-based function) `kalibrasi_nb` yang memproses ulang nilai Prioritas pada suatu entri, dengan mengecek kombinasi teks dan fitur yang dihasilkan sebelumnya:
+  - CRITICAL: Jika `status_deadline` Mepet ATAU deteksi kata rentan di `combined_text` (contoh: error, bug, crash, down).
+  - HIGH: Jika deadlinenya Sedang ATAU beban kerjanya Berat ATAU kategorinya merupakan Security / DevOps.
+  - LOW: Jika deadline Lama DAN beban pekerjaannya hanya Ringan.
+  - MEDIUM: Jika secara kondisi tidak memenuhi kriteria di atas (fallback).
+
+--------------------------------------------------------------------------------
+CELL 10 (Code): Penerapan Kalibrasi dan Cetak Sebaran Baru
+--------------------------------------------------------------------------------
+Menerapkan fungsi `kalibrasi_nb` ke keseluruhan baris dataframe untuk menggantikan label aktual pada kolom `priority`. Mencetak ulang distribusi kelas `priority` untuk mengevaluasi apakah sebaran label prioritas cukup rapi ("Naive Bayes Friendly").
+
+--------------------------------------------------------------------------------
+CELL 11 (Code): Kode Dinonaktifkan (Komentar)
+--------------------------------------------------------------------------------
+Terdapat kode yang dijadikan dalam bentuk komentar (dinonaktifkan/disable) yang tadinya disiapkan untuk menghapus referensi sementara dari variabel `status_deadline` dan `status_beban`.
+
+--------------------------------------------------------------------------------
+CELL 12 (Markdown): # Data Splitting
+--------------------------------------------------------------------------------
+Menandakan dimulainya proses pembagian data latih dan data uji dari entitas dataframe keseluruhan.
+
+--------------------------------------------------------------------------------
+CELL 13 (Code): Eksekusi Splitting Train-Test
+--------------------------------------------------------------------------------
+Memisahkan kumpulan fitur menjadi Data Latih (X) dan Data Target Utama (y = priority). Menggunakan iterasi Train-Test Split (80% Train, 20% Test) secara stratified test. Menampilkan bentuk dimensi dataset (ukuran baris dan kolom).
+
+--------------------------------------------------------------------------------
+CELL 14 (Markdown): # Training Model
+--------------------------------------------------------------------------------
+Gugusan instruksi untuk mempersiapkan instansiasi metodologi dan training pemodelan prediktif. 
+
+--------------------------------------------------------------------------------
+CELL 15 (Code): Import Modul Pemodelan Ekstra
+--------------------------------------------------------------------------------
+Mengimpor library pendukung untuk proses pemodelan Teks:
+- `GridSearchCV` (pencarian hyperparameter terbaik).
+- `TfidfVectorizer` (representasi bobot frekuensi term teks).
+- `MultinomialNB` (Algoritma Naive Bayes yang cocok dengan fitur kata/diskrit).
+- Modul untuk menampilkan laporan evaluasi (`classification_report`).
+
+--------------------------------------------------------------------------------
+CELL 16 (Code): Pembangunan Pipeline dan Pelatihan Model
+--------------------------------------------------------------------------------
+Ini merupakan core dari keseluruhan proses:
+1. Membuat Pipeline Preprocessing berarsitektur ColumnTransformer yang menyusun perlakuan transformator sesuai tipe argumen/data:
+   - Numerik: `minmax` scaling.
+   - Kategorikal: Teknik `onehot` encoding.
+   - Text (Teks Kombinasi): Proses representasi teks NLP menggunakan TF-IDF.
+2. Membentuk Pipeline Utama yang menggabungkan struktur alur Preprocessing dan Algoritma Klasifikasi (MultinomialNB).
+3. Mendefinisikan grid parameters untuk alpha parameter (konstanta smoothing laplace dari model).
+4. Melatih algoritma dengan bantuan `GridSearchCV` memakai 5 CV-fold dan optimasi berdasarkan f1-macro.
+5. Memprediksi ke dalam set pengujian dan mencetak laporan akhir (Classification Report) dan parameter terbaik dari Grid Search.
+
+--------------------------------------------------------------------------------
+CELL 17 (Markdown): # Save Model
+--------------------------------------------------------------------------------
+Penanda eksekusi akhir untuk proses pencadangan dan ekspor model.
+
+--------------------------------------------------------------------------------
+CELL 18 (Code): Menyimpan Model Persisten
+--------------------------------------------------------------------------------
+Mengekspor struktur terbaik pelatih model yang telah di-fit ke sebuah berkas pickle ".pkl" dengan nama "task-management-NB_calib.pkl" menggunakan rutinitas `save_model` dari library jcopml agar dapat dimuat tanpa harus perlu re-training.

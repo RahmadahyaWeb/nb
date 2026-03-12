@@ -1,0 +1,55 @@
+================================================================================
+GLOSARIUM DOKUMENTASI NAIVE BAYES
+================================================================================
+
+Berikut adalah daftar istilah teknis (glosarium) yang terdapat di dalam dokumentasi, beserta penjelasannya dengan bahasa yang lebih sederhana:
+
+1. **Binning (Kategorisasi Numerik)**: Proses mengelompokkan angka-angka yang bervariasi ke dalam rentang tertentu agar menjadi kategori. Contohnya, mengubah umur (dari angka 1-100) menjadi kelompok kategori usia (Anak-anak, Remaja, Dewasa).
+
+2. **Classification Report**: Laporan yang merangkum seberapa akurat model pintar (Machine Learning) dalam menebak jawaban yang tepat. Berisi nilai skor kedetailan seperti kemantapan tebakan (precision), kepekaan mengenali target (recall), dan keseimbangan (F1-score).
+
+3. **ColumnTransformer**: Alat otomatis dari Scikit-Learn yang berfungsi menerapkan langkah bersih-bersih data secara paralel, di mana cara kerja yang dipakai untuk merapikan baris angka berbeda dengan baris huruf.
+
+4. **Cross Validation (CV-Fold)**: Ujian ketahanan untuk model. Model tidak cuma diuji 1 kali, namun seluruh datanya dibagi menjadi beberapa lipatan (fold). Model akan dilatih dan diuji berulang kali secara merata pada setiap lipatan tersebut agar hasilnya terpercaya.
+
+5. **Data Leakage (Kebocoran Info)**: Kesalahan fatal di mana model AI secara tidak sengaja "melihat kunci jawaban" dari data ujian yang seharusnya dirahasiakan selama proses belajar. Model akan terlihat seakan-akan cerdas senilai 100%, tapi saat digunakan aslinya akan gagal.
+
+6. **Data Preprocessing / Data Wrangling**: Tahapan "beres-beres dapur". Proses membersihkan, merapikan format, dan melengkapi data mentah sebelum data tersebut disuapkan ke dalam mesin algoritma. Mesin hanya bisa belajar kalau datanya rapi.
+
+7. **DataFrame (Pandas)**: Struktur data seperti tabel mirip Microsoft Excel yang berisi baris dan kolom. Sangat populer digunakan untuk membaca dan menyimpan data secara tertata di sistem.
+
+8. **Data Train & Data Test (Data Latih & Uji)**: Saat melatih AI, data awal dipotong jadi dua. "Data Train" dipakai sebagai buku panduan agar AI belajar pola. "Data Test" disimpan rapat dan kelak digunakan sebagai kertas ujian untuk mengecek kepintaran dari AI-nya.
+
+9. **F1-macro / F1-score**: Salah satu jenis metrik (nilai raport) untuk menilai apakah model AI ini hebat atau tidak. F1 ini sangat peduli jika isi data itu tidak seimbang jumlah targetnya (misalnya lebih banyak kelas 'Mudah' daripada 'Sulit').
+
+10. **Feature Engineering (Rekayasa Fitur)**: Menciptakan kolom/informasi baru dari kombinasi bahan yang sudah ada dengan harapan "petunjuk baru" ini bisa membantu model untuk menemukan pola lebih terarah.
+
+11. **Feature Selection (Pemilihan Fitur)**: Proses menyeleksi dan membuang kolom/data yang sifatnya sampah (tidak informatif/tidak logis). Memastikan AI hanya belajar dari "daging" dan bukan dari "lemak" datanya.
+
+12. **GridSearchCV (Grid Search)**: Strategi jitu mencari "pengaturan kamera terbaik". Komputer disuruh mencoba satu per satu semua kombinasi level pengaturan tingkat kesulitan (hyperparameter) agar menemukan setelan sistem algoritma yang mendapatkan skor terhebat.
+
+13. **Heuristik (Pendekatan Heuristik) / Rule-based**: Menyelesaikan masalah tidak melulu menggunakan mesin perhitungan matematis dari robot, tapi berdasarkan akal sehat atau logika kebiasaan aturan "Jika Maka" (IF/THEN) susunan manusia.
+
+14. **Hyperparameter**: Tombol putar konfigurasinya 'mesin' prediksi yang bisa di-tune/disetel oleh manusia SEBELUM mesin itu jalan proses belajarnya.
+
+15. **Kalibrasi Label**: Sebuah proses penyesuaian ulang nama-nama kategori target supaya data tidak berat sebelah atau menjadi sangat masuk akal bagi mesin dalam menyederhanakan suatu masalah.
+
+16. **Machine Learning (ML)**: Program/mesin yang bisa menyesuaikan rumus pola secara otomatis dari lautan data berkat tumpukan logik, sehingga tanpa perlu pemrogram harus merekayasa manual cara kerjanya per satu kasus.
+
+17. **Minmax Scaling**: Menekan nilai angka yang terlalu besar agar tidak jomplang dibandingkan angka kecil (contoh dipadatkan menjadi angka yang berkisar cuma dari 0 sampai 1) karena model paling paham melihat angka-angka yang range ukurannya tidak acak-acakan jauh.
+
+18. **MultinomialNB (Naive Bayes)**: Mesin pendeteksi (Algoritma) probabilitas dan statistik untuk memilah data teks. Dinilai sangat cepat dan sangat bagus apabila dipakai dalam hal menebak kategori dari kombinasi bahasa kalimat log (teks diskrit). 
+
+19. **NLP (Natural Language Processing)**: Ilmu pengetahuan algoritma supaya otak komputer bisa mengerti dan memisahkan makna kata/kalimat/huruf dari bahasa persis layaknya yang manusia mengerti.
+
+20. **One-hot Encoding**: Cara untuk menerjemahkan kategori bahasa manusia ("Apel", "Jeruk", "Mangga") ke wujud sandi angka "binner" komputer (kombinasi deret 0 dan 1) supaya rumus matematika di mesin dapat berjalan.
+
+21. **Pickle (.pkl) / Model Persisten**: Format teknik "mengawetkan". Semisal jika otak model AI ini sudah hebat, "otaknya" disimpan ke suatu file. Kelak kalau komputer nyala lagi, tinggal me-load/muat file itu tanpa ia harus bersekolah dari ulang di esok hari.
+
+22. **Pipeline (Pipa)**: Menyusun serangkaian proses menjadi alur seperti pipa pabrik. Jika disuapi data beras di awal pintu masuk, datanya akan otomatis dipoles jadi bersih, lalu dimasak jadi nasi komplit di satu sambungan sistem pipa, hingga siap dimakan.
+
+23. **Scikit-Learn (sklearn)**: Sebuah "kotak perkakas (toolbox)" utama dan gratis yang paling laku digunakan untuk kegiatan pemrograman Machine Learning. Di dalamnya terdapat ratusan alat canggih rumus model yang sudah jadi.
+
+24. **Stratified Test (Stratified Split)**: Cara membelah data latih dan uji biar mewakili populasi. Misal komposisi aslinya 60% Pria:40% Wanita, cara pemotongan ber-strata ini memastikan data hasil cuplikan uji maupun tes rasio pria:wanita nya tak akan berat sebelah alias persis 60:40.
+
+25. **TF-IDF (TfidfVectorizer)**: Teknik agar komputer peduli makna unik kata dalam sekumpulan dokumen. Rumus ini akan melemahkan bobot kata sampah yang pasaran sering diucap (contoh; "yang", "dan", "di") dan malah memperkuat skor angka bagi kata sakti yang jarang muncul tapi maknanya esensial.

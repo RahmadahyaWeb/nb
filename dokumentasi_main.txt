@@ -1,0 +1,58 @@
+================================================================================
+DOKUMENTASI ALUR KERJA API
+================================================================================
+
+File `main.py` ini berisi kode untuk menjalankan sebuah server API (Application Programming Interface) menggunakan framework **FastAPI**. Tujuan utama dari API ini adalah menerima daftar tugas (tasks), memproses tugas-tugas tersebut dengan model Machine Learning (yang sudah dilatih sebelumnya), memprediksi tingkat prioritasnya, dan mengembalikannya dalam urutan prioritas yang optimal.
+
+Berikut adalah penjelasan terstruktur berurutan mengenai isi file tersebut:
+
+--------------------------------------------------------------------------------
+1. INISIALISASI & IMPORT LIBRARY
+--------------------------------------------------------------------------------
+Di bagian awal, kode memuat alat-alat (library) yang dibutuhkan:
+- `FastAPI`: Untuk membangun kerangka server web/API.
+- `BaseModel, Field` (dari Pydantic): Untuk mengatur validasi bentuk data input yang masuk dan data output yang keluar.
+- `pandas`: Untuk manipulasi data mentah ke dalam format tabel agar mudah diproses mesin.
+- `load_model` (dari jcopml): Untuk memuat otak/model Artificial Intelligence (AI) yang sudah matang dan disimpan sebelumnya.
+- Aplikasi FastAPI diinisialisasi dan diatur namanya menjadi "Task Prioritization AI API".
+
+--------------------------------------------------------------------------------
+2. MEMUAT (LOAD) MODEL MACHINE LEARNING
+--------------------------------------------------------------------------------
+Kode mencoba memuat file `task-management-NB_calib.pkl` dari dalam folder `model/`. File pickle `.pkl` ini adalah cetakan model Naive Bayes yang sebelumnya sudah diajarkan cara mengklasifikasikan tiket/task (pada tahap file dokumentasi_naive_bayes).
+Apabila model gagal dimuat karena tidak ditemukan atau error, sistem akan mencetak pesan error melalui print agar programmer tahu letak masalahnya.
+
+--------------------------------------------------------------------------------
+3. PEMBUATAN SKEMA VALIDASI (SCHEMA PYDANTIC)
+--------------------------------------------------------------------------------
+Skema ini bagaikan "formulir pendaftaran". Jika aplikasi (seperti mobile/web) mengirim data yang strukturnya tidak sesuai, FastAPI otomatis akan menolaknya.
+- **TaskItem**: Mendefinisikan struktur input dari pengguna web/front-end. Harus mencakup properti seperti: ID Tugas, Judul, Deskripsi, Kategori, Estimasi Waktu, Bobot Cerita (Story Point), dan Tanggal (due_date & created_at).
+- **TaskRequest**: Data bungkusan utama (payload) yang masuk. Minimal harus berisi array/list dari `TaskItem`.
+- **TaskResponseItem**: Skema baru yang mewarisi sifat `TaskItem`, tetapi mendapatkan _tambahan_ data berupa tingkat `priority` hasil terkaan AI, dan nomor `order` (urutan pengerjaan).
+- **TaskResponse**: Kerangka respons final yang akan "dilempar balik" ke pengguna web, isinya daftar `TaskResponseItem`.
+
+--------------------------------------------------------------------------------
+4. API ENDPOINT : /api/sort-tasks (FUNGSI UTAMA)
+--------------------------------------------------------------------------------
+Endpoint `@app.post(API_ENDPOINT)` adalah pintu masuk jaringan tempat web frontend/klien mengirim permintaan HTTP POST. Fungsi `sort_tasks` akan dieksekusi setiap ada permintaan yang masuk ke alamat itu. 
+
+Langkah operasional yang dijalankan API secara berurut:
+  a. **Penerimaan & Ekstraksi**: Menerima input data `TaskRequest`, merubah JSON mentah dari pengguna tersebut menjadi format tabel data (DataFrame Pandas) karena algoritma Machine Learning hanya mengerti format ini.
+  
+  b. **Proses Rekayasa Fitur (Feature Engineering)**: Karena komputer tidak tahu "judul" dan "deskripsi" secara terpisah, AI sebelumnya diajarkan lewat gabungan teks. Oleh karena itu, kode menggabungkan judul dan deskripsi ke dalam satu variabel `combined_text`. Selain itu menghitung selisih waktu (`days_to_due`) dari tanggal pembuatan ke tanggal deadline.
+  
+  c. **Memilih Fitur Inti**: Mengerucutkan tabel hanya ke lima kolom krusial yang dulu dipakai untuk melatih AI, yakni gabungan kalimat, kategori, jam kerja, bobot cerita, dan sisa hari kompetisi kerja.
+  
+  d. **Memprediksi Prioritas (Inference)**: Menyuntikkan input tersebut ke dalam fungsi pemanggil `model.predict()`. Model kini seketika mengeluarkan tebakan prioritas (apakah Critical, High, Medium, atau Low). Hasil simpanan ini dinotasikan sebagai `priority_pred`.
+  
+  e. **Mengurutkan Prioritas (Sorting Algoritma)**: Supaya memudahkan visualisasi, kata "Critical" dll, diterjemahkan ke nilai angka skor 1,2,3,4.
+     Kemudian, sistem mengurutkan tabel baris kerja mulai dari atas hingga paling bawah berdasar:
+     - 1st Priority : Nilai Skor AI (Rank 1/Kritis ditaruh di atas).
+     - 2nd Priority : Sisa hari deadline (Semakin mepet ditaruh di atas).
+     - 3rd Priority : Waktu Pengerjaan Estimasi Terpendek.
+     
+  f. **Mencatat Urutan & Response**: Setelah data rapi, diberikan stempel penomoran urutan tugas ke dalam kolom `order` (dimulai dari indeks 1). 
+  
+  g. **Pengiriman Jawaban (Return)**: DataFrame kembali dipecah dan dirakit menjadi bentuk format respons JSON kamus (Dictionary). Data tugas yang kini sudah bertahtakan tingkat Prioritas dan Urutan Kerja "Dilempar" kembali ke pengguna web dengan selamat.
+
+Bila di sepanjang jalannya kode terjadi masalah server lokal memicu "Crash", aplikasi terprogram mendelegasikan pendelegasian pesan kesalahan khusus dengan status web "Error 400 Bad Request" atau Internal Exception (HTTPException).
