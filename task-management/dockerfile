@@ -2,7 +2,6 @@ FROM php:8.3-cli
 
 WORKDIR /var/www/html
 
-# install system packages
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -14,17 +13,18 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm
 
-# install php extensions
 RUN docker-php-ext-install \
     pdo_mysql \
     mbstring \
     zip \
     gd
 
-# install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 8000
 EXPOSE 5173
 
-CMD php artisan serve --host=0.0.0.0 --port=8000
+ENTRYPOINT ["/entrypoint.sh"]

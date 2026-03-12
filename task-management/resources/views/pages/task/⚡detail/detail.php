@@ -264,7 +264,7 @@ new class extends Component
 
         $response = Http::timeout(30)
             ->asJson()
-            ->post('http://host.docker.internal:3030/api/sort-tasks', $payload);
+            ->post('http://python-api:8000/api/sort-tasks', $payload);
 
         if (! $response->successful()) {
             session()->flash('error', 'AI sorting service is unavailable.');
