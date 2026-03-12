@@ -78,8 +78,8 @@ class DatabaseSeeder extends Seeder
         // DEFAULT USER
         // =============================
         User::factory()->create([
-            'name' => 'rahmadahya',
-            'email' => 'thelastpc24@gmail.com',
+            'name' => 'testing',
+            'email' => 'testing@testing.com',
         ]);
 
         $this->call([
