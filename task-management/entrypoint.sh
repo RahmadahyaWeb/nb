@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# copy .env jika belum ada
+if [ ! -f ".env" ]; then
+  echo "Creating .env file..."
+  cp .env.example .env
+fi
+
 # install composer dependencies
 if [ ! -d "vendor" ]; then
   echo "Installing composer dependencies..."
@@ -22,7 +28,15 @@ fi
 echo "Building frontend..."
 npm run build
 
-php artisan migrate --seed
+echo "Checking database state..."
+
+if php artisan tinker --execute="echo Schema::hasTable('migrations');" | grep -q "1"; then
+  echo "Database already initialized. Running fresh migration..."
+  php artisan migrate:fresh --seed
+else
+  echo "Running initial migration..."
+  php artisan migrate --seed
+fi
 
 # start laravel
 echo "Starting Laravel server..."

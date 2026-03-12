@@ -2,142 +2,209 @@
 
 Project ini terdiri dari dua service utama:
 
-1. Laravel (Web Application)
-2. Python API (Machine Learning - Naive Bayes)
+1. **Laravel Web Application** (Task Management)
+2. **Python API** (Machine Learning - Naive Bayes)
 
-Keduanya dijalankan menggunakan Docker.
+Kedua service dijalankan menggunakan **Docker Compose**.
 
-------------------------------------------------------------
-STRUKTUR PROJECT
-------------------------------------------------------------
+---
+
+# Project Structure
 
 ```
 naive-bayes
-├── task-management/
-├── task-management-api/
-└── README.md
+│
+├── compose.yaml
+│
+├── task-management
+│   ├── Dockerfile
+│   ├── entrypoint.sh
+│   ├── app
+│   ├── routes
+│   ├── composer.json
+│   └── ...
+│
+└── task-management-api
+    ├── Dockerfile
+    ├── requirements.txt
+    └── app
 ```
 
-### Keterangan
+## Folder Description
 
-- `task-management/` → Laravel Web Application  
-- `task-management-api/` → Python Machine Learning API  
+| Folder                | Description                              |
+| --------------------- | ---------------------------------------- |
+| `task-management`     | Laravel Web Application                  |
+| `task-management-api` | Python FastAPI service untuk Naive Bayes |
+| `compose.yaml`        | Konfigurasi Docker Compose               |
 
-------------------------------------------------------------
-1. CLONE REPOSITORY
-------------------------------------------------------------
+---
 
-    git clone <repo-url>
-    cd naive-bayes
-    sudo chown -R user:user naive-bayes
+# Requirements
 
-------------------------------------------------------------
-2. SETUP LARAVEL (WEB APPLICATION)
-------------------------------------------------------------
-
-Masuk ke folder Laravel:
-
-    cd task-management
-
-Install dependency:
-
-    composer install
-    cp .env.example .env
-
-------------------------------------------------------------
-KONFIGURASI DATABASE
-------------------------------------------------------------
-
-Edit file .env dan sesuaikan:
-
-    DB_CONNECTION=mysql
-    DB_HOST=mysql
-    DB_PORT=3306
-    DB_DATABASE=naivebayes
-    DB_USERNAME=root
-    DB_PASSWORD=password
-
-------------------------------------------------------------
-INSTALL LARAVEL SAIL
-------------------------------------------------------------
-
-    php artisan sail:install
-
-------------------------------------------------------------
-GENERATE KEY & SETUP DATABASE
-------------------------------------------------------------
-
-    ./vendor/bin/sail artisan key:generate
-    ./vendor/bin/sail artisan migrate
-    ./vendor/bin/sail artisan db:seed
-
-------------------------------------------------------------
-JALANKAN LARAVEL
-------------------------------------------------------------
-
-    ./vendor/bin/sail up -d
-
-Akses aplikasi melalui browser:
-
-    http://localhost
-
-Untuk menghentikan container:
-
-    ./vendor/bin/sail down
-    
-atau
-    
-    ./vendor/bin/sail stop
-
-------------------------------------------------------------
-3. SETUP PYTHON API (MACHINE LEARNING SERVICE)
-------------------------------------------------------------
-
-Masuk ke folder API:
-
-    cd task-management-api
-
-Build dan jalankan container:
-
-    docker compose up --build
-
-Untuk menghentikan service:
-
-    docker compose down
-    
-atau
-   
-    docker compose stop
-
-API akan berjalan di http://localhost:8000/api/sort-tasks
-
-------------------------------------------------------------
-REQUIREMENT
-------------------------------------------------------------
+Pastikan software berikut sudah terinstall:
 
 - Docker
 - Docker Compose
-- PHP
-- Composer
-- Linux / WSL (Direkomendasikan)
+- Git
 
-------------------------------------------------------------
-TROUBLESHOOTING
-------------------------------------------------------------
+Untuk pengguna Windows, **WSL2 sangat direkomendasikan**.
 
-Permission Error:
+---
 
-    sudo chown -R $USER:$USER .
+# Installation
 
-Database Access Denied:
-- Pastikan konfigurasi .env sesuai dengan MySQL container.
-- Pastikan service mysql berjalan.
+Clone repository:
 
-Cek Log Container:
+```bash
+git clone <repo-url>
+cd naive-bayes
+```
 
-    ./vendor/bin/sail logs
-    docker compose logs
+---
 
-------------------------------------------------------------
+# Run Application
 
-Project siap digunakan setelah kedua service (Laravel dan Python API) berjalan dengan baik.
+Jalankan seluruh service menggunakan Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+Docker akan menjalankan:
+
+- Laravel container
+- MySQL container
+- Python API container
+
+Saat container Laravel pertama kali dijalankan, sistem akan otomatis:
+
+- membuat `.env` jika belum ada
+- generate `APP_KEY`
+- install dependency (`composer install`)
+- install frontend dependency (`npm install`)
+- build frontend (`npm run build`)
+- menjalankan Laravel server
+
+---
+
+# Access Application
+
+Laravel Web Application:
+
+```
+http://localhost:8000
+```
+
+Python API (Naive Bayes):
+
+```
+http://localhost:8001/docs
+```
+
+Endpoint API utama:
+
+```
+http://localhost:8001/api/sort-tasks
+```
+
+---
+
+# Database Configuration
+
+Laravel menggunakan service MySQL dari Docker.
+
+Default configuration:
+
+```
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=naivebayes
+DB_USERNAME=laravel
+DB_PASSWORD=laravel
+```
+
+Database akan otomatis dibuat saat container pertama kali dijalankan.
+
+---
+
+# Run Laravel Commands
+
+Untuk menjalankan perintah artisan:
+
+```bash
+docker compose exec laravel php artisan migrate
+```
+
+Contoh perintah lain:
+
+```bash
+docker compose exec laravel php artisan tinker
+docker compose exec laravel php artisan db:seed
+```
+
+---
+
+# Stop Application
+
+Untuk menghentikan container:
+
+```bash
+docker compose down
+```
+
+Untuk menghentikan sekaligus menghapus database:
+
+```bash
+docker compose down -v
+```
+
+---
+
+# View Logs
+
+Melihat log semua container:
+
+```bash
+docker compose logs
+```
+
+Melihat log Laravel saja:
+
+```bash
+docker compose logs laravel
+```
+
+---
+
+# Troubleshooting
+
+## Permission Error (WSL)
+
+Jika terjadi error permission:
+
+```bash
+sudo chown -R $USER:$USER .
+```
+
+## Database Connection Error
+
+Pastikan MySQL container berjalan:
+
+```bash
+docker ps
+```
+
+Jika database bermasalah, reset volume:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+---
+
+# License
+
+Project ini dibuat untuk keperluan pembelajaran dan pengembangan.
