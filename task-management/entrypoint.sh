@@ -22,6 +22,8 @@ fi
 echo "Building frontend..."
 npm run build
 
+php artisan migrate --seed
+
 # start laravel
 echo "Starting Laravel server..."
 php artisan serve --host=0.0.0.0 --port=8000
